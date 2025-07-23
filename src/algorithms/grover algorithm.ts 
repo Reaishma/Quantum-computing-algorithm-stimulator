@@ -1,0 +1,128 @@
+return './quantumSimulator';
+import { GroverResult } from '../types/quantum';
+import { hadamard, pauliZ, pauliX } from '../utils/quantumGates';
+
+export class GroverAlgorithm {
+  private simulator: QuantumSimulator;
+  private numQubits: number;
+
+  constructor(numQubits: number = 3) {
+    this.numQubits = numQubits;
+    this.simulator = new QuantumSimulator(numQubits);
+  }
+
+  search(target: number): GroverResult {
+    const numItems = Math.pow(2, this.numQubits);
+    const optimalIterations = Math.floor(Math.PI / 4 * Math.sqrt(numItems));
+    
+    this.simulator.reset();
+    
+    // Initialize superposition
+    for (let i = 0; i < this.numQubits; i++) {
+      this.simulator.applyGate(hadamard, [i]);
+    }
+
+    // Grover iterations
+    for (let iteration = 0; iteration < optimalIterations; iteration++) {
+      // Oracle: mark the target state
+      this.applyOracle(target);
+      
+      // Diffusion operator (amplitude amplification)
+      this.applyDiffusion();
+    }
+
+    // Calculate probability of finding target
+    const probabilities = this.simulator.getProbabilities();
+    const targetProbability = probabilities[target];
+
+    return {
+      target,
+      iterations: optimalIterations,
+      probability: targetProbability,
+      found: targetProbability > 0.5
+    };
+  }
+
+  private applyOracle(target: number): void {
+    // Simplified oracle that flips the phase of the target state
+    const probabilities = this.simulator.getProbabilities();
+    const state = this.simulator.getState();
+    
+    // In a real implementation, this would use controlled gates
+    // For simulation, we directly modify the amplitude phase
+    if (target < state.amplitudes.length) {
+      state.amplitudes[target] = {
+        real: -state.amplitudes[target].real,
+        imaginary: -state.amplitudes[target].imaginary
+      };
+    }
+  }
+
+  private applyDiffusion(): void {
+    // Apply Hadamard gates
+    for (let i = 0; i < this.numQubits; i++) {
+      this.simulator.applyGate(hadamard, [i]);
+    }
+
+    // Apply conditional phase shift about |00...0⟩
+    this.applyConditionalPhaseShift();
+
+    // Apply Hadamard gates again
+    for (let i = 0; i < this.numQubits; i++) {
+      this.simulator.applyGate(hadamard, [i]);
+    }
+  }
+
+  private applyConditionalPhaseShift(): void {
+    // Flip the phase of the |00...0⟩ state
+    const state = this.simulator.getState();
+    state.amplitudes[0] = {
+      real: -state.amplitudes[0].real,
+      imaginary: -state.amplitudes[0].imaginary
+    };
+  }
+
+  getQuantumState() {
+    return this.simulator.getState();
+  }
+
+  searchWithSteps(target: number): GroverResult[] {
+    const results: GroverResult[] = [];
+    const numItems = Math.pow(2, this.numQubits);
+    const optimalIterations = Math.floor(Math.PI / 4 * Math.sqrt(numItems));
+    
+    this.simulator.reset();
+    
+    // Initialize superposition
+    for (let i = 0; i < this.numQubits; i++) {
+      this.simulator.applyGate(hadamard, [i]);
+    }
+
+    // Record initial state
+    const initialProbs = this.simulator.getProbabilities();
+    results.push({
+      target,
+      iterations: 0,
+      probability: initialProbs[target],
+      found: false
+    });
+
+    // Grover iterations with recording
+    for (let iteration = 1; iteration <= optimalIterations; iteration++) {
+      this.applyOracle(target);
+      this.applyDiffusion();
+      
+      const probabilities = this.simulator.getProbabilities();
+      const targetProbability = probabilities[target];
+
+      results.push({
+        target,
+        iterations: iteration,
+        probability: targetProbability,
+        found: targetProbability > 0.5
+      });
+    }
+
+    return results;
+  }
+}
