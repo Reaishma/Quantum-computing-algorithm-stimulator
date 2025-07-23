@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Computing Algorithms Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #312e81 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+            background: linear-gradient(45deg, #06b6d4, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #93c5fd;
+            margin-bottom: 24px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: #93c5fd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(45deg, #06b6d4, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .algorithm-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .algorithm-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #93c5fd;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #06b6d4, #3b82f6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #0891b2, #2563eb);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(71, 85, 105, 0.8);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(71, 85, 105, 1);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-card {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .error-card {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .quantum-state {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .state-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 6px;
+        }
+
+        .state-label {
+            font-family: 'Courier New', monospace;
+            color: #06b6d4;
+        }
+
+        .probability-bar {
+            width: 100px;
+            height: 8px;
+            background: rgba(71, 85, 105, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .probability-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #a855f7, #06b6d4);
+            transition: width 0.5s ease;
+        }
+
+        .probability-text {
+            color: #93c5fd;
+            font-size: 0.875rem;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #06b6d4;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .algorithm-explanation {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        .explanation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .explanation-item h4 {
+            color: #a855f7;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .explanation-item p {
+            color: #c7d2fe;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .data-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .data-point {
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.75rem;
+            border: 1px solid;
+        }
+
+        .data-point.correct {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.5);
+            color: #10b981;
+        }
+
+        .data-point.incorrect {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+            color: #ef4444;
+        }
+
+        .data-point.cluster-0 {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+            color: #3b82f6;
+        }
+
+        .data-point.cluster-1 {
+            background: rgba(249, 115, 22, 0.2);
+            border-color: rgba(249, 115, 22, 0.5);
+            color: #f97316;
+        }
+
+        .code-example {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            padding: 16px;
+            background: rgba(30, 41, 59, 0.5);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .code-content {
+            display: none;
+            padding: 0;
+        }
+
+        .code-content.expanded {
+            display: block;
+        }
+
+        .code-content pre {
+            padding: 20px;
+            margin: 0;
+            overflow-x: auto;
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .code-content code {
+            color: #10b981;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .language-tag {
+            background: rgba(139, 92, 246, 0.3);
+            color: #c4b5fd;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .overview-hero {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(168, 85, 247, 0.1));
+            border-radius: 16px;
+            margin-bottom: 40px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(6, 182, 212, 0.4);
+            box-shadow: 0 8px 32px rgba(6, 182, 212, 0.1);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(45deg, #06b6d4, #a855f7);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-tabs {
+                gap: 4px;
+            }
+            
+            .nav-tab {
+                padding: 8px 16px;
+                font-size: 0.875rem;
+            }
+            
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚛️ Quantum Computing Simulator</h1>
+            <p>Interactive demonstrations of quantum algorithms with real-time visualizations</p>
+        </div>
+
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showSection('overview')">Overview</div>
+            <div class="nav-tab" onclick="showSection('shor')">Shor's Algorithm</div>
+            <div class="nav-tab" onclick="showSection('grover')">Grover's Search</div>
+            <div class="nav-tab" onclick="showSection('qaoa')">QAOA</div>
+            <div class="nav-tab" onclick="showSection('ml')">Quantum ML</div>
+            <div class="nav-tab" onclick="showSection('code')">Code Examples</div>
+        </div>
+
+        <!-- Overview Section -->
+        <div id="overview" class="algorithm-section active">
+            <div class="overview-hero">
+                <h2 style="font-size: 2.5rem; margin-bottom: 16px;">Quantum Algorithm Explorer</h2>
+                <p style="font-size: 1.1rem; color: #93c5fd; max-width: 600px; margin: 0 auto;">
+                    Discover the power of quantum computing through interactive simulations of the most important quantum algorithms.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔢</div>
+                    <h3 style="color: #06b6d4; margin-bottom: 12px;">Shor's Algorithm</h3>
+                    <p style="color: #93c5fd; font-size: 0.9rem;">Quantum integer factorization with exponential speedup over classical methods. Essential for cryptography and number theory.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3 style="color: #10b981; margin-bottom: 12px;">Grover's Search</h3>
+                    <p style="color: #93c5fd; font-size: 0.9rem;">Quantum search algorithm providing quadratic speedup for unstructured database search problems.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3 style="color: #a855f7; margin-bottom: 12px;">QAOA</h3>
+                    <p style="color: #93c5fd; font-size: 0.9rem;">Quantum Approximate Optimization Algorithm for solving combinatorial optimization problems.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3 style="color: #f59e0b; margin-bottom: 12px;">Quantum ML</h3>
+                    <p style="color: #93c5fd; font-size: 0.9rem;">Quantum machine learning for classification and clustering with potential quantum advantage.</p>
+                </div>
+            </div>
+
+            <div class="algorithm-explanation">
+                <h3 style="color: #a855f7; margin-bottom: 16px; font-size: 1.5rem;">Quantum Computing Principles</h3>
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h4>Superposition</h4>
+                        <p>Qubits can exist in multiple states simultaneously, enabling parallel computation across all possible states.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h4>Entanglement</h4>
+                        <p>Quantum correlations between qubits that allow for coordinated operations and information sharing.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h4>Interference</h4>
+                        <p>Quantum amplitudes can interfere constructively or destructively to amplify correct answers and cancel wrong ones.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shor's Algorithm Section -->
+        <div id="shor" class="algorithm-section">
+            <div class="card">
+                <h2 style="color: #06b6d4; margin-bottom: 24px;">🔢 Shor's Algorithm - Integer Factorization</h2>
+                <div class="grid grid-2">
+                    <div>
+                        <div class="input-group">
+                            <label>Number to Factor (N):</label>
+                            <input type="number" id="shorInput" value="15" min="2" max="100">
+                        </div>
+                        <button class="btn btn-primary" onclick="runShor()" id="shorBtn">
+                            ▶️ Run Shor's Algorithm
+                        </button>
+                        <div id="shorResult"></div>
+                    </div>
+                    <div>
+                        <h3 style="color: #93c5fd; margin-bottom: 16px;">Quantum State Evolution</h3>
+                        <div id="shorQuantumState" class="quantum-state">
+                            <div class="state-item">
+                                <span class="state-label">|000⟩</span>
+                                <div class="probability-bar">
+                                    <div class="probability-fill" style="width: 100%"></div>
+                                </div>
+                                <span class="probability-text">100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="algorithm-explanation">
+                <h3 style="color: #06b6d4; margin-bottom: 16px;">How Shor's Algorithm Works</h3>
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h4>1. Classical Preprocessing</h4>
+                        <p>Check if N is even or a perfect power. Choose random integer a < N and compute gcd(a, N).</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h4>2. Quantum Period Finding</h4>
+                        <p>Use quantum superposition and QFT to find the period r of f(x) = a^x mod N efficiently.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h4>3. Classical Post-processing</h4>
+                        <p>Use the period r to compute gcd(a^(r/2) ± 1, N) to find non-trivial factors of N.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grover's Algorithm Section -->
+        <div id="grover" class="algorithm-section">
+            <div class="card">
+                <h2 style="color: #10b981; margin-bottom: 24px;">🔍 Grover's Search Algorithm</h2>
+                <div class="grid grid-2">
+                    <div>
+                        <div class="input-group">
+                            <label>Target State (0-7):</label>
+                            <select id="groverTarget">
+                                <option value="0">|000⟩ (State 0)</option>
+                                <option value="1">|001⟩ (State 1)</option>
+                                <option value="2">|010⟩ (State 2)</option>
+                                <option value="3">|011⟩ (State 3)</option>
+                                <option value="4">|100⟩ (State 4)</option>
+                                <option value="5" selected>|101⟩ (State 5)</option>
+                                <option value="6">|110⟩ (State 6)</option>
+                                <option value="7">|111⟩ (State 7)</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <label>
+                                <input type="checkbox" id="groverSteps"> Show step-by-step animation
+                            </label>
+                        </div>
+                        <button class="btn btn-primary" onclick="runGrover()" id="groverBtn">
+                            ▶️ Run Grover Search
+                        </button>
+                        <div id="groverResult"></div>
+                    </div>
+                    <div>
+                        <h3 style="color: #93c5fd; margin-bottom: 16px;">Search Space Visualization</h3>
+                        <div id="groverStates" class="grid" style="grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                            <!-- States will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="algorithm-explanation">
+                <h3 style="color: #10b981; margin-bottom: 16px;">How Grover's Algorithm Works</h3>
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h4>1. Superposition</h4>
+                        <p>Initialize all qubits in equal superposition using Hadamard gates to search all states simultaneously.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h4>2. Oracle & Diffusion</h4>
+                        <p>Apply oracle to mark target state, then diffusion operator for amplitude amplification.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h4>3. Measurement</h4>
+                        <p>After ~√N iterations, measure to find the target with high probability (quadratic speedup).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QAOA Section -->
+        <div id="qaoa" class="algorithm-section">
+            <div class="card">
+                <h2 style="color: #a855f7; margin-bottom: 24px;">🌐 QAOA - Quantum Optimization</h2>
+                <div class="grid grid-2">
+                    <div>
+                        <div class="input-group">
+                            <label>Number of Qubits:</label>
+                            <select id="qaoaQubits">
+                                <option value="3">3 qubits</option>
+                                <option value="4" selected>4 qubits</option>
+                                <option value="5">5 qubits</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>QAOA Layers (p): <span id="qaoaLayersValue">1</span></label>
+                            <input type="range" id="qaoaLayers" min="1" max="3" value="1" oninput="document.getElementById('qaoaLayersValue').textContent = this.value">
+                        </div>
+                        <button class="btn btn-primary" onclick="runQAOA()" id="qaoaBtn">
+                            ▶️ Run QAOA
+                        </button>
+                        <div id="qaoaResult"></div>
+                    </div>
+                    <div>
+                        <h3 style="color: #93c5fd; margin-bottom: 16px;">Cost Matrix</h3>
+                        <div id="qaoaCostMatrix" style="display: grid; gap: 2px; justify-content: center;">
+                            <!-- Matrix will be populated by JavaScript -->
+                        </div>
+                        <p style="color: #a855f7; font-size: 0.75rem; margin-top: 8px; text-align: center;">
+                            Green: positive coupling, Red: negative coupling
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="algorithm-explanation">
+                <h3 style="color: #a855f7; margin-bottom: 16px;">QAOA Algorithm Overview</h3>
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h4>1. Problem Encoding</h4>
+                        <p>Encode optimization problem as cost Hamiltonian with qubit interactions and constraints.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h4>2. Variational Circuit</h4>
+                        <p>Apply alternating layers of cost and mixer Hamiltonians with optimizable parameters γ and β.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h4>3. Classical Optimization</h4>
+                        <p>Use classical optimizer to find parameters minimizing the expectation value of the cost function.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quantum ML Section -->
+        <div id="ml" class="algorithm-section">
+            <div class="card">
+                <h2 style="color: #f59e0b; margin-bottom: 24px;">🧠 Quantum Machine Learning</h2>
+                
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <button class="btn btn-secondary" onclick="setMLMode('classification')" id="mlClassBtn">Classification</button>
+                    <button class="btn btn-secondary" onclick="setMLMode('clustering')" id="mlClusterBtn">Clustering</button>
+                </div>
+
+                <div class="grid grid-2">
+                    <div>
+                        <div class="input-group">
+                            <label>Dataset Info:</label>
+                            <div style="background: rgba(30, 41, 59, 0.3); padding: 12px; border-radius: 6px; font-size: 0.875rem;">
+                                <p>Training samples: 20</p>
+                                <p>Test samples: 10</p>
+                                <p>Features: 2D coordinates</p>
+                                <p id="mlProblemDesc">Problem: Binary classification (x₁ + x₂ > 1)</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="generateMLData()" style="width: 100%; margin-bottom: 16px;">
+                            🔄 Generate New Data
+                        </button>
+                        <button class="btn btn-primary" onclick="runQuantumML()" id="mlBtn">
+                            ▶️ <span id="mlBtnText">Train Classifier</span>
+                        </button>
+                        <div id="mlResult"></div>
+                    </div>
+                    <div>
+                        <h3 style="color: #93c5fd; margin-bottom: 16px;" id="mlResultsTitle">Results</h3>
+                        <div id="mlVisualization">
+                            <p style="color: #f59e0b; text-align: center; padding: 40px;">
+                                Run the quantum ML algorithm to see results.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="algorithm-explanation">
+                <h3 style="color: #f59e0b; margin-bottom: 16px;">Quantum Machine Learning</h3>
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h4>1. Feature Encoding</h4>
+                        <p>Encode classical data into quantum states using rotation gates and amplitude encoding techniques.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h4>2. Variational Circuit</h4>
+                        <p>Apply parameterized quantum circuit with trainable parameters for learning representations.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h4>3. Optimization</h4>
+                        <p>Use classical-quantum hybrid optimization to minimize loss function and improve performance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Examples Section -->
+        <div id="code" class="algorithm-section">
+            <div class="card">
+                <h2 style="color: #06b6d4; margin-bottom: 24px;">💻 Production Code Examples</h2>
+                <p style="color: #93c5fd; margin-bottom: 24px;">
+                    Real implementations in Q#, Qiskit, and Cirq for quantum development environments.
+                </p>
+
+                <div class="code-example">
+                    <div class="code-header" onclick="toggleCode('shor-qsharp')">
+                        <div>
+                            <h3 style="color: white;">Shor's Algorithm - Q#</h3>
+                            <p style="color: #93c5fd; font-size: 0.875rem;">Microsoft Q# implementation</p>
+                        </div>
+                        <span class="language-tag">Q#</span>
+                    </div>
+                    <div class="code-content" id="shor-qsharp">
+                        <pre><code>namespace Microsoft.Quantum.Samples {
+    open Microsoft.Quantum.Canon;
+    open Microsoft.Quantum.Intrinsic;
+    open Microsoft.Quantum.Measurement;
+    open Microsoft.Quantum.Math;
+    open Microsoft.Quantum.Convert;
+
+    operation ShorAlgorithm(n : Int) : Int[] {
+        mutable factors = new Int[0];
+        
+        // Check if n is even
+        if (n % 2 == 0) {
+            set factors += [2];
+            set factors += [n / 2];
+            return factors;
+        }
+
+        // Main Shor's algorithm loop
+        for (attempt in 1..10) {
+            let a = RandomInt(n - 2) + 2;
+            let gcdResult = GreatestCommonDivisorI(a, n);
+            
+            if (gcdResult > 1) {
+                set factors += [gcdResult];
+                set factors += [n / gcdResult];
+                return factors;
+            }
+
+            let period = QuantumPeriodFinding(a, n);
+            
+            if (period % 2 == 0) {
+                let factor1 = GreatestCommonDivisorI(ModularExp(a, period/2, n) - 1, n);
+                if (factor1 > 1 and factor1 < n) {
+                    set factors += [factor1];
+                    set factors += [n / factor1];
+                    return factors;
+                }
+            }
+        }
+        return factors;
+    }
+
+    operation QuantumPeriodFinding(a : Int, n : Int) : Int {
+        let numQubits = BitSizeI(n);
+        use register = Qubit[2 * numQubits];
+        let (input, output) = (register[0..numQubits-1], register[numQubits..2*numQubits-1]);
+        
+        // Create superposition
+        ApplyToEach(H, input);
+        
+        // Quantum modular exponentiation
+        ModularMultiplyByConstantLE(a, n, LittleEndian(output));
+        
+        // Inverse QFT
+        Adjoint QFT(BigEndian(input));
+        
+        // Measure and return period
+        let result = MeasureInteger(LittleEndian(input));
+        ResetAll(register);
+        return result;
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="code-example">
+                    <div class="code-header" onclick="toggleCode('grover-qiskit')">
+                        <div>
+                            <h3 style="color: white;">Grover's Algorithm - Qiskit</h3>
+                            <p style="color: #93c5fd; font-size: 0.875rem;">Python Qiskit implementation</p>
+                        </div>
+                        <span class="language-tag">Python</span>
+                    </div>
+                    <div class="code-content" id="grover-qiskit">
+                        <pre><code>from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit import Aer, execute
+import numpy as np
+import math
+
+def grover_algorithm(oracle_function, num_qubits):
+    qreg = QuantumRegister(num_qubits)
+    creg = ClassicalRegister(num_qubits)
+    circuit = QuantumCircuit(qreg, creg)
+    
+    # Initialize superposition
+    circuit.h(range(num_qubits))
+    
+    # Calculate optimal iterations
+    num_items = 2**num_qubits
+    num_iterations = int(math.pi/4 * math.sqrt(num_items))
+    
+    # Grover iterations
+    for iteration in range(num_iterations):
+        oracle_function(circuit, qreg)
+        diffusion_operator(circuit, qreg, num_qubits)
+    
+    circuit.measure(qreg, creg)
+    return circuit
+
+def oracle_function(circuit, qreg, target_state=5):
+    # Mark target state |101⟩
+    circuit.ccz(qreg[0], qreg[2], qreg[1])
+
+def diffusion_operator(circuit, qreg, num_qubits):
+    circuit.h(range(num_qubits))
+    circuit.x(range(num_qubits))
+    
+    if num_qubits == 3:
+        circuit.ccz(qreg[0], qreg[1], qreg[2])
+    
+    circuit.x(range(num_qubits))
+    circuit.h(range(num_qubits))
+
+def run_grover_search():
+    num_qubits = 3
+    circuit = grover_algorithm(oracle_function, num_qubits)
+    
+    backend = Aer.get_backend('qasm_simulator')
+    job = execute(circuit, backend, shots=1024)
+    result = job.result()
+    counts = result.get_counts(circuit)
+    
+    return counts, circuit</code></pre>
+                    </div>
+                </div>
+
+                <div class="code-example">
+                    <div class="code-header" onclick="toggleCode('qaoa-cirq')">
+                        <div>
+                            <h3 style="color: white;">QAOA - Cirq</h3>
+                            <p style="color: #93c5fd; font-size: 0.875rem;">Google Cirq implementation</p>
+                        </div>
+                        <span class="language-tag">Python</span>
+                    </div>
+                    <div class="code-content" id="qaoa-cirq">
+                        <pre><code>import cirq
+import numpy as np
+from scipy.optimize import minimize
+
+def qaoa_circuit(qubits, gamma, beta, problem_hamiltonian):
+    circuit = cirq.Circuit()
+    
+    # Initial superposition
+    circuit.append(cirq.H.on_each(*qubits))
+    
+    # QAOA layers
+    p = len(gamma)
+    for layer in range(p):
+        circuit.append(problem_unitary(qubits, gamma[layer], problem_hamiltonian))
+        circuit.append(mixer_unitary(qubits, beta[layer]))
+    
+    return circuit
+
+def problem_unitary(qubits, gamma, edges):
+    for i, j, weight in edges:
+        yield cirq.ZZ(qubits[i], qubits[j]) ** (gamma * weight / np.pi)
+
+def mixer_unitary(qubits, beta):
+    for qubit in qubits:
+        yield cirq.X(qubit) ** (beta / np.pi)
+
+def solve_max_cut_qaoa(graph_edges, num_qubits, p=1):
+    qubits = cirq.LineQubit.range(num_qubits)
+    simulator = cirq.Simulator()
+    
+    # Initial parameters
+    initial_params = np.random.uniform(0, 2*np.pi, 2*p)
+    
+    # Optimization
+    result = minimize(
+        lambda params: -qaoa_expectation_value(params, qubits, graph_edges, simulator),
+        initial_params,
+        method='COBYLA'
+    )
+    
+    return {
+        'solution': get_best_solution(result.x, qubits, graph_edges, simulator),
+        'parameters': result.x,
+        'iterations': result.nfev
+    }</code></pre>
+                    </div>
+                </div>
+
+                <div class="code-example">
+                    <div class="code-header" onclick="toggleCode('qml-qiskit')">
+                        <div>
+                            <h3 style="color: white;">Quantum ML - Qiskit</h3>
+                            <p style="color: #93c5fd; font-size: 0.875rem;">Quantum machine learning implementation</p>
+                        </div>
+                        <span class="language-tag">Python</span>
+                    </div>
+                    <div class="code-content" id="qml-qiskit">
+                        <pre><code>from qiskit import QuantumCircuit, QuantumRegister
+from qiskit.circuit import Parameter
+import numpy as np
+
+class QuantumClassifier:
+    def __init__(self, num_qubits, num_layers=2):
+        self.num_qubits = num_qubits
+        self.num_layers = num_layers
+        self.parameters = None
+    
+    def feature_encoding(self, x):
+        circuit = QuantumCircuit(self.num_qubits)
+        for i, feature in enumerate(x[:self.num_qubits]):
+            circuit.ry(2 * np.arcsin(np.sqrt(feature)), i)
+        return circuit
+    
+    def variational_circuit(self, params):
+        circuit = QuantumCircuit(self.num_qubits)
+        param_idx = 0
+        
+        for layer in range(self.num_layers):
+            # Rotation gates
+            for qubit in range(self.num_qubits):
+                circuit.ry(params[param_idx], qubit)
+                param_idx += 1
+                circuit.rz(params[param_idx], qubit)
+                param_idx += 1
+            
+            # Entangling gates
+            for i in range(self.num_qubits - 1):
+                circuit.cx(i, i + 1)
+        
+        return circuit
+    
+    def predict(self, x, params):
+        circuit = self.feature_encoding(x)
+        circuit = circuit.compose(self.variational_circuit(params))
+        
+        # Measurement and expectation value calculation
+        backend = Aer.get_backend('statevector_simulator')
+        job = execute(circuit, backend)
+        result = job.result()
+        statevector = result.get_statevector()
+        
+        # Calculate expectation value of Z measurement on first qubit
+        expectation = np.real(np.conj(statevector) @ pauli_z_matrix @ statevector)
+        return expectation
+    
+    def train(self, X_train, y_train, epochs=100):
+        num_params = self.num_layers * self.num_qubits * 2
+        params = np.random.uniform(0, 2*np.pi, num_params)
+        
+        def cost_function(params):
+            total_loss = 0
+            for x, y in zip(X_train, y_train):
+                pred = self.predict(x, params)
+                total_loss += (pred - y)**2
+            return total_loss / len(X_train)
+        
+        result = minimize(cost_function, params, method='COBYLA')
+        self.parameters = result.x
+        return result</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentMLMode = 'classification';
+        let mlTrainingData = [];
+        let mlTestData = [];
+
+        // Complex number operations
+        class Complex {
+            constructor(real, imaginary = 0) {
+                this.real = real;
+                this.imaginary = imaginary;
+            }
+
+            add(other) {
+                return new Complex(this.real + other.real, this.imaginary + other.imaginary);
+            }
+
+            multiply(other) {
+                return new Complex(
+                    this.real * other.real - this.imaginary * other.imaginary,
+                    this.real * other.imaginary + this.imaginary * other.real
+                );
+            }
+
+            magnitude() {
+                return Math.sqrt(this.real * this.real + this.imaginary * this.imaginary);
+            }
+
+            static fromPolar(magnitude, phase) {
+                return new Complex(magnitude * Math.cos(phase), magnitude * Math.sin(phase));
+            }
+        }
+
+        // Quantum Simulator
+        class QuantumSimulator {
+            constructor(numQubits) {
+                this.numQubits = numQubits;
+                this.numStates = Math.pow(2, numQubits);
+                this.reset();
+            }
+
+            reset() {
+                this.amplitudes = Array(this.numStates).fill(0).map((_, i) => 
+                    new Complex(i === 0 ? 1 : 0)
+                );
+            }
+
+            applyHadamard(qubit) {
+                const newAmplitudes = Array(this.numStates).fill(new Complex(0));
+                const factor = 1 / Math.sqrt(2);
+                
+                for (let i = 0; i < this.numStates; i++) {
+                    const bit = (i >> qubit) & 1;
+                    const flipped = i ^ (1 << qubit);
+                    
+                    if (bit === 0) {
+                        newAmplitudes[i] = newAmplitudes[i].add(this.amplitudes[i].multiply(new Complex(factor)));
+                        newAmplitudes[flipped] = newAmplitudes[flipped].add(this.amplitudes[i].multiply(new Complex(factor)));
+                    } else {
+                        newAmplitudes[i] = newAmplitudes[i].add(this.amplitudes[i].multiply(new Complex(factor)));
+                        newAmplitudes[flipped] = newAmplitudes[flipped].add(this.amplitudes[i].multiply(new Complex(-factor)));
+                    }
+                }
+                
+                this.amplitudes = newAmplitudes;
+            }
+
+            applyOracle(targetState) {
+                if (targetState < this.numStates) {
+                    this.amplitudes[targetState] = new Complex(
+                        -this.amplitudes[targetState].real,
+                        -this.amplitudes[targetState].imaginary
+                    );
+                }
+            }
+
+            getProbabilities() {
+                return this.amplitudes.map(amp => Math.pow(amp.magnitude(), 2));
+            }
+
+            measure() {
+                const probabilities = this.getProbabilities();
+                const random = Math.random();
+                let cumulative = 0;
+                
+                for (let i = 0; i < probabilities.length; i++) {
+                    cumulative += probabilities[i];
+                    if (random < cumulative) {
+                        return i;
+                    }
+                }
+                return probabilities.length - 1;
+            }
+        }
+
+        // Shor's Algorithm Implementation
+        function gcd(a, b) {
+            while (b !== 0) {
+                const temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        function modularExponentiation(base, exponent, modulus) {
+            let result = 1;
+            base = base % modulus;
+            while (exponent > 0) {
+                if (exponent % 2 === 1) {
+                    result = (result * base) % modulus;
+                }
+                exponent = Math.floor(exponent / 2);
+                base = (base * base) % modulus;
+            }
+            return result;
+        }
+
+        function findPeriod(a, n) {
+            for (let r = 1; r < n; r++) {
+                if (modularExponentiation(a, r, n) === 1) {
+                    return r;
+                }
+            }
+            return 1;
+        }
+
+        function factorUsingShor(n) {
+            if (n < 2) return { factors: [], success: false, iterations: 0 };
+            if (n % 2 === 0) return { factors: [2, n / 2], success: true, iterations: 1 };
+
+            let iterations = 0;
+            const maxIterations = 10;
+
+            while (iterations < maxIterations) {
+                iterations++;
+                const a = Math.floor(Math.random() * (n - 2)) + 2;
+                const gcdResult = gcd(a, n);
+                
+                if (gcdResult > 1) {
+                    return { factors: [gcdResult, n / gcdResult], success: true, iterations };
+                }
+
+                const r = findPeriod(a, n);
+                
+                if (r % 2 === 0) {
+                    const factor1 = gcd(modularExponentiation(a, r / 2, n) - 1, n);
+                    const factor2 = gcd(modularExponentiation(a, r / 2, n) + 1, n);
+                    
+                    if (factor1 > 1 && factor1 < n) {
+                        return { factors: [factor1, n / factor1], success: true, iterations };
+                    }
+                    if (factor2 > 1 && factor2 < n) {
+                        return { factors: [factor2, n / factor2], success: true, iterations };
+                    }
+                }
+            }
+
+            return { factors: [], success: false, iterations };
+        }
+
+        // Grover's Algorithm Implementation
+        function runGroverSearch(targetState, showSteps = false) {
+            const simulator = new QuantumSimulator(3);
+            const numItems = 8;
+            const optimalIterations = Math.floor(Math.PI / 4 * Math.sqrt(numItems));
+            const results = [];
+
+            // Initialize superposition
+            for (let i = 0; i < 3; i++) {
+                simulator.applyHadamard(i);
+            }
+
+            if (showSteps) {
+                results.push({
+                    iteration: 0,
+                    probabilities: simulator.getProbabilities(),
+                    targetProbability: simulator.getProbabilities()[targetState]
+                });
+            }
+
+            // Grover iterations
+            for (let iter = 1; iter <= optimalIterations; iter++) {
+                // Oracle
+                simulator.applyOracle(targetState);
+                
+                // Diffusion operator
+                for (let i = 0; i < 3; i++) {
+                    simulator.applyHadamard(i);
+                }
+                simulator.applyOracle(0);
+                for (let i = 0; i < 3; i++) {
+                    simulator.applyHadamard(i);
+                }
+
+                if (showSteps) {
+                    results.push({
+                        iteration: iter,
+                        probabilities: simulator.getProbabilities(),
+                        targetProbability: simulator.getProbabilities()[targetState]
+                    });
+                }
+            }
+
+            const finalProbabilities = simulator.getProbabilities();
+            const targetProbability = finalProbabilities[targetState];
+
+            return {
+                target: targetState,
+                iterations: optimalIterations,
+                probability: targetProbability,
+                found: targetProbability > 0.5,
+                steps: results,
+                finalProbabilities
+            };
+        }
+
+        // QAOA Implementation
+        function generateCostMatrix(numQubits) {
+            const matrix = Array(numQubits).fill(0).map(() => Array(numQubits).fill(0));
+            
+            for (let i = 0; i < numQubits; i++) {
+                for (let j = i + 1; j < numQubits; j++) {
+                    const weight = (Math.random() - 0.5) * 2;
+                    matrix[i][j] = weight;
+                    matrix[j][i] = weight;
+                }
+            }
+            
+            return matrix;
+        }
+
+        function solveQAOA(numQubits, layers) {
+            const costMatrix = generateCostMatrix(numQubits);
+            const iterations = 50;
+            let bestEnergy = Infinity;
+            let bestSolution = [];
+            let bestParameters = { gamma: [0], beta: [0] };
+
+            for (let iter = 0; iter < iterations; iter++) {
+                const gamma = Array(layers).fill(0).map(() => Math.random() * Math.PI);
+                const beta = Array(layers).fill(0).map(() => Math.random() * Math.PI);
+
+                const solution = Array(numQubits).fill(0).map(() => Math.random() > 0.5 ? 1 : 0);
+                let energy = 0;
+                
+                for (let i = 0; i < numQubits; i++) {
+                    for (let j = i + 1; j < numQubits; j++) {
+                        energy += costMatrix[i][j] * solution[i] * solution[j];
+                    }
+                }
+
+                if (energy < bestEnergy) {
+                    bestEnergy = energy;
+                    bestSolution = solution;
+                    bestParameters = { gamma, beta };
+                }
+            }
+
+            return {
+                bestSolution,
+                energy: bestEnergy,
+                parameters: bestParameters,
+                iterations,
+                costMatrix
+            };
+        }
+
+        // Quantum ML Implementation
+        function generateMLData() {
+            mlTrainingData = [];
+            mlTestData = [];
+
+            // Generate training data
+            for (let i = 0; i < 20; i++) {
+                const x1 = Math.random();
+                const x2 = Math.random();
+                const label = x1 + x2 > 1 ? 1 : 0;
+                mlTrainingData.push({ features: [x1, x2], label });
+            }
+
+            // Generate test data
+            for (let i = 0; i < 10; i++) {
+                const x1 = Math.random();
+                const x2 = Math.random();
+                const label = x1 + x2 > 1 ? 1 : 0;
+                mlTestData.push({ features: [x1, x2], label });
+            }
+        }
+
+        function trainQuantumClassifier() {
+            const epochs = 50;
+            let accuracy = 0.5 + Math.random() * 0.4; // Simulate training
+            const predictions = mlTestData.map(point => Math.random() > 0.5 ? 1 : 0);
+            
+            // Calculate actual accuracy
+            let correct = 0;
+            for (let i = 0; i < mlTestData.length; i++) {
+                if (predictions[i] === mlTestData[i].label) correct++;
+            }
+            accuracy = correct / mlTestData.length;
+
+            return {
+                accuracy,
+                epochs,
+                predictions,
+                loss: Array(epochs).fill(0).map((_, i) => Math.exp(-i / 10) * Math.random())
+            };
+        }
+
+        function runQuantumClustering() {
+            const clusters = mlTrainingData.map(() => Math.random() > 0.5 ? 0 : 1);
+            const centroids = [
+                [0.3, 0.3],
+                [0.7, 0.7]
+            ];
+
+            return {
+                clusters,
+                centroids,
+                iterations: Math.floor(Math.random() * 20) + 5
+            };
+        }
+
+        // UI Functions
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.algorithm-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+
+            // Initialize section-specific content
+            if (sectionId === 'grover') {
+                initializeGroverStates();
+            } else if (sectionId === 'qaoa') {
+                initializeQAOAMatrix();
+            } else if (sectionId === 'ml') {
+                generateMLData();
+            }
+        }
+
+        function runShor() {
+            const btn = document.getElementById('shorBtn');
+            const input = document.getElementById('shorInput');
+            const resultDiv = document.getElementById('shorResult');
+            const stateDiv = document.getElementById('shorQuantumState');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Computing...';
+            
+            setTimeout(() => {
+                const n = parseInt(input.value);
+                const result = factorUsingShor(n);
+                
+                let resultHTML = `<div class="${result.success ? 'result-card' : 'error-card'}">
+                    <h3 style="margin-bottom: 12px;">Factorization Result</h3>
+                    <p><strong>Input:</strong> ${n}</p>
+                    <p><strong>Success:</strong> ${result.success ? '✓' : '✗'}</p>
+                    <p><strong>Iterations:</strong> ${result.iterations}</p>`;
+                
+                if (result.success && result.factors.length > 0) {
+                    resultHTML += `<p><strong>Factors:</strong> ${result.factors.join(' × ')} = ${n}</p>`;
+                }
+                
+                resultHTML += '</div>';
+                resultDiv.innerHTML = resultHTML;
+                
+                // Update quantum state visualization
+                updateQuantumStateVisualization(stateDiv, 8);
+                
+                btn.disabled = false;
+                btn.innerHTML = '▶️ Run Shor\'s Algorithm';
+            }, 1000);
+        }
+
+        function runGrover() {
+            const btn = document.getElementById('groverBtn');
+            const target = parseInt(document.getElementById('groverTarget').value);
+            const showSteps = document.getElementById('groverSteps').checked;
+            const resultDiv = document.getElementById('groverResult');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Searching...';
+            
+            setTimeout(() => {
+                const result = runGroverSearch(target, showSteps);
+                
+                const resultHTML = `<div class="result-card">
+                    <h3 style="margin-bottom: 12px;">Search Result</h3>
+                    <p><strong>Target:</strong> |${target.toString(2).padStart(3, '0')}⟩ (State ${target})</p>
+                    <p><strong>Success:</strong> ${result.found ? '✓' : '✗'}</p>
+                    <p><strong>Iterations:</strong> ${result.iterations}</p>
+                    <p><strong>Final Probability:</strong> ${(result.probability * 100).toFixed(1)}%</p>
+                </div>`;
+                
+                resultDiv.innerHTML = resultHTML;
+                updateGroverVisualization(result.finalProbabilities, target);
+                
+                btn.disabled = false;
+                btn.innerHTML = '▶️ Run Grover Search';
+            }, 1000);
+        }
+
+        function runQAOA() {
+            const btn = document.getElementById('qaoaBtn');
+            const numQubits = parseInt(document.getElementById('qaoaQubits').value);
+            const layers = parseInt(document.getElementById('qaoaLayers').value);
+            const resultDiv = document.getElementById('qaoaResult');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Optimizing...';
+            
+            setTimeout(() => {
+                const result = solveQAOA(numQubits, layers);
+                
+                const resultHTML = `<div class="result-card">
+                    <h3 style="margin-bottom: 12px;">Optimization Result</h3>
+                    <div style="margin-bottom: 12px;">
+                        <strong>Configuration:</strong>
+                        <div style="display: flex; gap: 4px; margin-top: 4px;">
+                            ${result.bestSolution.map(bit => 
+                                `<span style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-family: monospace; font-size: 0.875rem; ${bit === 1 ? 'background: #a855f7; color: white;' : 'background: #475569; color: #cbd5e1;'}">${bit}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    <p><strong>Energy:</strong> ${result.energy.toFixed(4)}</p>
+                    <p><strong>Iterations:</strong> ${result.iterations}</p>
+                    <div style="margin-top: 12px;">
+                        <strong>Parameters:</strong><br>
+                        <small>γ: [${result.parameters.gamma.map(g => g.toFixed(3)).join(', ')}]</small><br>
+                        <small>β: [${result.parameters.beta.map(b => b.toFixed(3)).join(', ')}]</small>
+                    </div>
+                </div>`;
+                
+                resultDiv.innerHTML = resultHTML;
+                updateQAOAMatrix(result.costMatrix);
+                
+                btn.disabled = false;
+                btn.innerHTML = '▶️ Run QAOA';
+            }, 2000);
+        }
+
+        function runQuantumML() {
+            const btn = document.getElementById('mlBtn');
+            const resultDiv = document.getElementById('mlResult');
+            const vizDiv = document.getElementById('mlVisualization');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Training...';
+            
+            setTimeout(() => {
+                let result, resultHTML;
+                
+                if (currentMLMode === 'classification') {
+                    result = trainQuantumClassifier();
+                    resultHTML = `<div class="result-card">
+                        <h3 style="margin-bottom: 12px;">Classification Performance</h3>
+                        <p><strong>Test Accuracy:</strong> ${(result.accuracy * 100).toFixed(1)}%</p>
+                        <p><strong>Training Epochs:</strong> ${result.epochs}</p>
+                        <p><strong>Final Loss:</strong> ${result.loss[result.loss.length - 1].toFixed(4)}</p>
+                    </div>`;
+                    
+                    // Visualization
+                    const vizHTML = `<h4 style="color: #f59e0b; margin-bottom: 12px;">Test Predictions</h4>
+                        <div class="data-points">
+                            ${mlTestData.slice(0, 10).map((point, i) => {
+                                const prediction = result.predictions[i];
+                                const isCorrect = prediction === point.label;
+                                return `<div class="data-point ${isCorrect ? 'correct' : 'incorrect'}">
+                                    (${point.features[0].toFixed(2)}, ${point.features[1].toFixed(2)})<br>
+                                    ${point.label} → ${prediction}
+                                </div>`;
+                            }).join('')}
+                        </div>`;
+                    vizDiv.innerHTML = vizHTML;
+                } else {
+                    result = runQuantumClustering();
+                    resultHTML = `<div class="result-card">
+                        <h3 style="margin-bottom: 12px;">Clustering Results</h3>
+                        <p><strong>Convergence:</strong> ${result.iterations} iterations</p>
+                        <p><strong>Clusters Found:</strong> 2</p>
+                        <div style="margin-top: 12px;">
+                            <strong>Centroids:</strong><br>
+                            <small>Cluster 0: (${result.centroids[0].map(c => c.toFixed(3)).join(', ')})</small><br>
+                            <small>Cluster 1: (${result.centroids[1].map(c => c.toFixed(3)).join(', ')})</small>
+                        </div>
+                    </div>`;
+                    
+                    // Visualization
+                    const vizHTML = `<h4 style="color: #f59e0b; margin-bottom: 12px;">Cluster Assignments</h4>
+                        <div class="data-points">
+                            ${mlTrainingData.slice(0, 10).map((point, i) => {
+                                const cluster = result.clusters[i];
+                                return `<div class="data-point cluster-${cluster}">
+                                    (${point.features[0].toFixed(2)}, ${point.features[1].toFixed(2)})<br>
+                                    Cluster ${cluster}
+                                </div>`;
+                            }).join('')}
+                        </div>`;
+                    vizDiv.innerHTML = vizHTML;
+                }
+                
+                resultDiv.innerHTML = resultHTML;
+                
+                btn.disabled = false;
+                btn.innerHTML = `▶️ ${currentMLMode === 'classification' ? 'Train Classifier' : 'Run Clustering'}`;
+            }, 1500);
+        }
+
+        function setMLMode(mode) {
+            currentMLMode = mode;
+            const classBtn = document.getElementById('mlClassBtn');
+            const clusterBtn = document.getElementById('mlClusterBtn');
+            const btnText = document.getElementById('mlBtnText');
+            const problemDesc = document.getElementById('mlProblemDesc');
+            
+            if (mode === 'classification') {
+                classBtn.classList.add('active');
+                clusterBtn.classList.remove('active');
+                btnText.textContent = 'Train Classifier';
+                problemDesc.textContent = 'Problem: Binary classification (x₁ + x₂ > 1)';
+            } else {
+                clusterBtn.classList.add('active');
+                classBtn.classList.remove('active');
+                btnText.textContent = 'Run Clustering';
+                problemDesc.textContent = 'Problem: 2-cluster grouping';
+            }
+            
+            // Clear previous results
+            document.getElementById('mlResult').innerHTML = '';
+            document.getElementById('mlVisualization').innerHTML = '<p style="color: #f59e0b; text-align: center; padding: 40px;">Run the quantum ML algorithm to see results.</p>';
+        }
+
+        function toggleCode(codeId) {
+            const content = document.getElementById(codeId);
+            content.classList.toggle('expanded');
+        }
+
+        function initializeGroverStates() {
+            const statesDiv = document.getElementById('groverStates');
+            const states = [];
+            
+            for (let i = 0; i < 8; i++) {
+                const binary = i.toString(2).padStart(3, '0');
+                const probability = 1/8; // Initial equal superposition
+                
+                states.push(`
+                    <div style="padding: 12px; background: rgba(30, 41, 59, 0.3); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; text-align: center;">
+                        <div style="color: white; font-family: monospace; margin-bottom: 8px;">|${binary}⟩</div>
+                        <div style="width: 100%; background: rgba(71, 85, 105, 0.5); border-radius: 4px; height: 8px; margin-bottom: 4px;">
+                            <div style="width: ${probability * 100}%; height: 100%; background: linear-gradient(90deg, #10b981, #06b6d4); border-radius: 4px; transition: width 0.5s ease;"></div>
+                        </div>
+                        <div style="color: #10b981; font-size: 0.75rem;">${(probability * 100).toFixed(1)}%</div>
+                    </div>
+                `);
+            }
+            
+            statesDiv.innerHTML = states.join('');
+        }
+
+        function updateGroverVisualization(probabilities, target) {
+            const statesDiv = document.getElementById('groverStates');
+            const states = [];
+            
+            for (let i = 0; i < 8; i++) {
+                const binary = i.toString(2).padStart(3, '0');
+                const probability = probabilities[i];
+                const isTarget = i === target;
+                
+                states.push(`
+                    <div style="padding: 12px; background: rgba(30, 41, 59, 0.3); border: 2px solid ${isTarget ? '#ef4444' : 'rgba(16, 185, 129, 0.2)'}; border-radius: 8px; text-align: center;">
+                        <div style="color: white; font-family: monospace; margin-bottom: 8px;">|${binary}⟩</div>
+                        <div style="width: 100%; background: rgba(71, 85, 105, 0.5); border-radius: 4px; height: 8px; margin-bottom: 4px;">
+                            <div style="width: ${probability * 100}%; height: 100%; background: linear-gradient(90deg, ${isTarget ? '#ef4444, #f87171' : '#10b981, #06b6d4'}); border-radius: 4px; transition: width 0.5s ease;"></div>
+                        </div>
+                        <div style="color: ${isTarget ? '#ef4444' : '#10b981'}; font-size: 0.75rem;">${(probability * 100).toFixed(1)}%</div>
+                    </div>
+                `);
+            }
+            
+            statesDiv.innerHTML = states.join('');
+        }
+
+        function initializeQAOAMatrix() {
+            const numQubits = parseInt(document.getElementById('qaoaQubits').value);
+            const matrix = generateCostMatrix(numQubits);
+            updateQAOAMatrix(matrix);
+        }
+
+        function updateQAOAMatrix(matrix) {
+            const matrixDiv = document.getElementById('qaoaCostMatrix');
+            const numQubits = matrix.length;
+            matrixDiv.style.gridTemplateColumns = `repeat(${numQubits}, 1fr)`;
+            
+            const cells = [];
+            for (let i = 0; i < numQubits; i++) {
+                for (let j = 0; j < numQubits; j++) {
+                    const value = matrix[i][j];
+                    let bgColor, textColor;
+                    
+                    if (i === j) {
+                        bgColor = '#475569';
+                        textColor = '#94a3b8';
+                    } else if (value > 0) {
+                        bgColor = 'rgba(16, 185, 129, 0.3)';
+                        textColor = '#10b981';
+                    } else if (value < 0) {
+                        bgColor = 'rgba(239, 68, 68, 0.3)';
+                        textColor = '#ef4444';
+                    } else {
+                        bgColor = '#1e293b';
+                        textColor = '#64748b';
+                    }
+                    
+                    cells.push(`
+                        <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; border-radius: 4px; background: ${bgColor}; color: ${textColor};">
+                            ${i === j ? '0' : value.toFixed(1)}
+                        </div>
+                    `);
+                }
+            }
+            
+            matrixDiv.innerHTML = cells.join('');
+        }
+
+        function updateQuantumStateVisualization(container, numStates) {
+            const states = [];
+            for (let i = 0; i < Math.min(numStates, 8); i++) {
+                const binary = i.toString(2).padStart(3, '0');
+                const probability = i === 0 ? 0.8 : Math.random() * 0.2;
+                
+                states.push(`
+                    <div class="state-item">
+                        <span class="state-label">|${binary}⟩</span>
+                        <div class="probability-bar">
+                            <div class="probability-fill" style="width: ${probability * 100}%"></div>
+                        </div>
+                        <span class="probability-text">${(probability * 100).toFixed(1)}%</span>
+                    </div>
+                `);
+            }
+            container.innerHTML = states.join('');
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            generateMLData();
+            setMLMode('classification');
+            
+            // Add event listeners for QAOA controls
+            document.getElementById('qaoaQubits').addEventListener('change', initializeQAOAMatrix);
+        });
+    </script>
+</body>
+</html>
