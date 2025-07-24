@@ -527,12 +527,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - **Google Quantum AI** - Cirq framework and quantum supremacy research
 - **Quantum Computing Community** - Open source contributions and algorithm implementations
 
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/your-repo/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-repo/discussions)
-- **Email**: quantum-support@yourproject.com
-- **Documentation**: [Wiki](https://github.com/your-repo/wiki)
 
 ## 🔮 Roadmap
 
