@@ -5,8 +5,16 @@ A comprehensive interactive platform for exploring quantum computing algorithms 
 ## 🚀 Live Demo
 
 [view live demo](https://reaishma.github.io/Quantum-computing-algorithm-stimulator/)
+Here are the features of the Quantum Computing Simulator:
+
 
 ## 🚀 Features
+
+### Main Features:
+
+- Interactive Demonstrations: Interactive simulations of quantum algorithms, including Shor's Algorithm, Grover's Search, QAOA, and Quantum Machine Learning.
+- Real-time Visualizations: Real-time visualizations of quantum states, probability amplitudes, and measurement outcomes.
+- Code Examples: Code examples in popular quantum development environments like Q#, Qiskit, and Cirq.
 
 ### Quantum Algorithms Implemented
 
@@ -22,6 +30,18 @@ A comprehensive interactive platform for exploring quantum computing algorithms 
 - Interactive parameter tuning and optimization
 - Quantum circuit visualization with gate operations
 - Measurement statistics and probability distributions
+
+### Visualization Features:
+
+ - Quantum State Evolution: Visualization of quantum state evolution over time.
+ - Probability Amplitude Visualization: Visualization of probability amplitudes for different quantum states.
+ -  Measurement Outcome Visualization: Visualization of measurement outcomes and their probabilities.
+
+### Code Features:
+
+- *Q# Code Examples*: Code examples in Microsoft's Q# programming language.
+- *Qiskit Code Examples*: Code examples in IBM's Qiskit framework.
+- *Cirq Code Examples*: Code examples in Google's Cirq framework.
 
 ### Educational Resources
 
