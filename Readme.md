@@ -4,7 +4,7 @@ A comprehensive interactive platform for exploring quantum computing algorithms 
 
 ## 🚀 Live Demo
 
-[View Live Demo](https://reaishma.github.io/Quantum-computing-algorithm-stimulator/)
+View Live Demo https://reaishma.github.io/Quantum-computing-algorithm-stimulator/
 
 
 ## 🚀 Features
