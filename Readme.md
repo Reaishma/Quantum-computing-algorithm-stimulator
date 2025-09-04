@@ -2,6 +2,9 @@
 
 A comprehensive interactive platform for exploring quantum computing algorithms including Shor's algorithm, Grover's search, QAOA, and quantum machine learning models. This project provides both educational simulations and production-ready code examples in Q#, Qiskit, and Cirq.
 
+
+![overview](https://github.com/Reaishma/Quantum-computing-algorithm-stimulator/blob/main/Screenshot_20250904-162959_1.jpg)
+
 ## 🚀 Live Demo
 
 View Live Demo https://reaishma.github.io/Quantum-computing-algorithm-stimulator/
