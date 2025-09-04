@@ -95,6 +95,8 @@ open quantum-simulator.html
 
 ### Shor's Algorithm
 
+![Shor Algorithm](https://github.com/Reaishma/Quantum-computing-algorithm-stimulator/blob/main/Screenshot_20250904-163013_1.jpg)
+
 **Purpose**: Integer factorization with exponential speedup over classical algorithms
 
 **Complexity**: O((log N)³) vs Classical O(exp(√log N))
