@@ -116,6 +116,8 @@ console.log(`Factors of 15: ${result.factors}`); // [3, 5]
 
 ### Grover's Search Algorithm
 
+![Grover](https://github.com/Reaishma/Quantum-computing-algorithm-stimulator/blob/main/Screenshot_20250904-163021_1.jpg)
+
 **Purpose**: Unstructured database search with quadratic speedup
 
 **Complexity**: O(√N) vs Classical O(N)
