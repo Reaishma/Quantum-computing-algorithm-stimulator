@@ -157,6 +157,8 @@ console.log(`Energy: ${result.energy}`);
 
 ### Quantum Machine Learning
 
+![Quantum machine learning](https://github.com/Reaishma/Quantum-computing-algorithm-stimulator/blob/main/Screenshot_20250904-163042_1.jpg)
+
 **Purpose**: Quantum-enhanced classification and clustering
 
 **Models Implemented**:
