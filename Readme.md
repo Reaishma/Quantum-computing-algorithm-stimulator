@@ -137,6 +137,8 @@ console.log(`Found target with probability: ${result.probability}`);
 
 ### QAOA (Quantum Approximate Optimization Algorithm)
 
+![QAOQ](https://github.com/Reaishma/Quantum-computing-algorithm-stimulator/blob/main/Screenshot_20250904-163031_1.jpg)
+
 **Purpose**: Combinatorial optimization problems (Max-Cut, TSP, etc.)
 
 **Key Components**:
